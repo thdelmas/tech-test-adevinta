@@ -19,8 +19,3 @@ func StatsHandler(c *gin.Context) {
 		Hits:                hits,
 	})
 }
-
-// HealthCheckHandler handles the health check endpoint
-func HealthCheckHandler(c *gin.Context) {
-	c.String(http.StatusOK, "OK")
-}
