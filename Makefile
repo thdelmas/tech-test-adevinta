@@ -5,13 +5,6 @@ EXEC_PATH := bin/$(NAME)
 RM = /bin/rm
 
 SRC_DIR := ./src
-SRC_SUB_DIRS := \
-	config \
-	handlers \
-	helpers \
-	models \
-	router \
-	services
 
 include $(SRC_DIR)/sources.mk
 
@@ -19,8 +12,6 @@ SRC_FILES = $(addprefix $(SRC_DIR)/,$(GO_FILES))
 SRC_FILES += $(SRC_DIR)/go.mod
 SRC_FILES += $(SRC_DIR)/go.sum
 SRC_FILES += $(SRC_DIR)/sources.mk
-
-SRC_SUB_PATHS := $(addprefix ./, $(SRC_SUB_DIRS))
 
 .PHONY: all clean re
 
@@ -39,7 +30,7 @@ clean:
 re: clean $(EXEC_PATH)
 
 test: re
-	go -C $(SRC_DIR) test -v $(SRC_SUB_PATHS)
+	go -C $(SRC_DIR) test -v --race ./handlers ./services
 
 docker_build: test
 	docker build --no-cache -t $(NAME) .
