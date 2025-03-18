@@ -6,23 +6,16 @@ RM = /bin/rm
 
 SRC_DIR := ./src
 
-include $(SRC_DIR)/sources.mk
-
-SRC_FILES = $(addprefix $(SRC_DIR)/,$(GO_FILES))
-SRC_FILES += $(SRC_DIR)/go.mod
-SRC_FILES += $(SRC_DIR)/go.sum
-SRC_FILES += $(SRC_DIR)/sources.mk
-
 .PHONY: all clean re
 
 all: $(EXEC_PATH)
 
-$(EXEC_PATH): $(SRC_FILES)
+$(EXEC_PATH):
 	@mkdir -p ./bin
-	go -C $(SRC_DIR) build -o ../$(EXEC_PATH)
+	go -C $(SRC_DIR) build -o ../$(EXEC_PATH) ./
 
 run: $(EXEC_PATH)
-	@./$(EXEC_PATH)
+	@go -C $(SRC_DIR) run .
 
 clean:
 	$(RM) -rf bin
@@ -30,7 +23,7 @@ clean:
 re: clean $(EXEC_PATH)
 
 test: re
-	go -C $(SRC_DIR) test -v --race ./handlers ./services
+	go -C $(SRC_DIR) test -v --race ./...
 
 docker_build: test
 	docker build --no-cache -t $(NAME) .
