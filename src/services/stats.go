@@ -12,7 +12,7 @@ import (
 // StatsServiceInterface defines methods for tracking and retrieving statistics
 type StatsServiceInterface interface {
 	TrackRequest(req models.FizzBuzzRequest)
-	GetMostFrequentRequest() (models.FizzBuzzRequest, int)
+	GetMostFrequentRequest() (models.FizzBuzzRequest, int, error)
 }
 
 // StatsService tracks and provides statistics for requests
@@ -41,7 +41,7 @@ func (s *StatsService) TrackRequest(req models.FizzBuzzRequest) {
 }
 
 // GetMostFrequentRequest returns the most frequent request and its hit count
-func (s *StatsService) GetMostFrequentRequest() (models.FizzBuzzRequest, int) {
+func (s *StatsService) GetMostFrequentRequest() (models.FizzBuzzRequest, int, error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -56,7 +56,7 @@ func (s *StatsService) GetMostFrequentRequest() (models.FizzBuzzRequest, int) {
 	}
 
 	if maxHits == 0 {
-		return models.FizzBuzzRequest{}, 0
+		return models.FizzBuzzRequest{}, 0, fmt.Errorf("no requests have been tracked yet")
 	}
 
 	var req models.FizzBuzzRequest
@@ -69,5 +69,5 @@ func (s *StatsService) GetMostFrequentRequest() (models.FizzBuzzRequest, int) {
 		req.Str2 = parts[4]
 	}
 
-	return req, maxHits
+	return req, maxHits, nil
 }

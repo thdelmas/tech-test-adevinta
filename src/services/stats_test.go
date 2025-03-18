@@ -20,7 +20,10 @@ func TestTrackRequestAndGetMostFrequentRequest(t *testing.T) {
 	service.TrackRequest(req2)
 
 	// Get most frequent request
-	mostFrequent, count := service.GetMostFrequentRequest()
+	mostFrequent, count, err := service.GetMostFrequentRequest()
+
+	// Verify that there is no error
+	assert.NoError(t, err)
 
 	// Verify the most frequent request is req1
 	assert.Equal(t, req1, mostFrequent)
@@ -31,9 +34,13 @@ func TestGetMostFrequentRequest_NoRequests(t *testing.T) {
 	service := NewStatsService()
 
 	// No requests have been tracked yet
-	mostFrequent, count := service.GetMostFrequentRequest()
+	mostFrequent, count, err := service.GetMostFrequentRequest()
 
-	// Verify empty result
+	// Verify the error message
 	assert.Equal(t, models.FizzBuzzRequest{}, mostFrequent)
 	assert.Equal(t, 0, count)
+	assert.Error(t, err)
+
+	// Verify the error message
+	assert.Equal(t, "no requests have been tracked yet", err.Error())
 }

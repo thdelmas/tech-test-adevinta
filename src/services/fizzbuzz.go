@@ -21,6 +21,7 @@ func NewFizzBuzzService() *FizzBuzzService {
 
 // GenerateFizzBuzz generates the fizzbuzz sequence based on the given request
 func (s *FizzBuzzService) GenerateFizzBuzz(req models.FizzBuzzRequest) []string {
+
 	result := make([]string, req.Limit)
 	for i := 1; i <= req.Limit; i++ {
 		switch {

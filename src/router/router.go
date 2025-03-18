@@ -20,7 +20,7 @@ func SetupRouter(fizzBuzzService services.FizzBuzzServiceInterface, statsService
 	api := router.Group("/api")
 	{
 		// Inject dependencies into the handlers
-		api.GET("/fizzbuzz", handlers.NewFizzBuzzHandler(fizzBuzzService).HandleFizzBuzz)
+		api.GET("/fizzbuzz", handlers.NewFizzBuzzHandler(fizzBuzzService, statsService).HandleFizzBuzz)
 		api.GET("/stats", handlers.NewStatsHandler(statsService).HandleStats)
 	}
 

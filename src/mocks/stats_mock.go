@@ -35,12 +35,13 @@ func (m *MockStatsServiceInterface) EXPECT() *MockStatsServiceInterfaceMockRecor
 }
 
 // GetMostFrequentRequest mocks base method.
-func (m *MockStatsServiceInterface) GetMostFrequentRequest() (models.FizzBuzzRequest, int) {
+func (m *MockStatsServiceInterface) GetMostFrequentRequest() (models.FizzBuzzRequest, int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetMostFrequentRequest")
 	ret0, _ := ret[0].(models.FizzBuzzRequest)
 	ret1, _ := ret[1].(int)
-	return ret0, ret1
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // GetMostFrequentRequest indicates an expected call of GetMostFrequentRequest.

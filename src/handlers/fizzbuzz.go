@@ -10,21 +10,29 @@ import (
 
 // FizzBuzzHandler struct with service dependency
 type FizzBuzzHandler struct {
-	service services.FizzBuzzServiceInterface
+	service      services.FizzBuzzServiceInterface
+	statsService services.StatsServiceInterface
 }
 
 // NewFizzBuzzHandler initializes a new handler with dependency injection
-func NewFizzBuzzHandler(service services.FizzBuzzServiceInterface) *FizzBuzzHandler {
-	return &FizzBuzzHandler{service: service}
+func NewFizzBuzzHandler(service services.FizzBuzzServiceInterface, statsService services.StatsServiceInterface) *FizzBuzzHandler {
+	return &FizzBuzzHandler{service: service, statsService: statsService}
 }
 
-// HandleFizzBuzz processes requests
 func (h *FizzBuzzHandler) HandleFizzBuzz(c *gin.Context) {
 	var req models.FizzBuzzRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.BindQuery(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
+
+	// Validate that Limit is greater than 0
+	if req.Limit <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	h.statsService.TrackRequest(req)
 
 	result := h.service.GenerateFizzBuzz(req)
 	c.JSON(http.StatusOK, result)

@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/thdelmas/tech-test-adevinta/models"
 	"github.com/thdelmas/tech-test-adevinta/services"
 )
 
@@ -19,38 +18,19 @@ func NewStatsHandler(service services.StatsServiceInterface) *StatsHandler {
 }
 
 func (h *StatsHandler) HandleStats(c *gin.Context) {
-	var request models.FizzBuzzRequest
-
-	// Bind request
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// Call GetMostFrequentRequest method
+	mostFrequentRequest, hitCount, err := h.service.GetMostFrequentRequest()
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Validate request
-	if request.Int1 <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Int1 must be greater than 0"})
-		return // Ensure you return here before calling TrackRequest
-	}
-
-	if request.Int2 <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Int2 must be greater than 0"})
-		return // Ensure you return here before calling TrackRequest
-	}
-
-	if request.Limit <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Limit must be greater than 0"})
-		return // Ensure you return here before calling TrackRequest
-	}
-
-	// Only call TrackRequest if validation passes
-	h.service.TrackRequest(request)
-
-	// Rest of your handler logic
-	mostFreqReq, hitCount := h.service.GetMostFrequentRequest()
-
-	c.JSON(http.StatusOK, gin.H{
+	// Prepare the response
+	response := gin.H{
 		"hitCount": hitCount,
-		"request":  mostFreqReq,
-	})
+		"request":  mostFrequentRequest,
+	}
+
+	// Send JSON response
+	c.JSON(http.StatusOK, response)
 }

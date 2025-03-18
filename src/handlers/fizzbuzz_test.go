@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -19,6 +18,7 @@ func TestFizzBuzzHandler_Success(t *testing.T) {
 
 	// Mock FizzBuzzService
 	mockFizzBuzzService := mocks.NewMockFizzBuzzServiceInterface(ctrl)
+	mockStatsService := mocks.NewMockStatsServiceInterface(ctrl)
 
 	// Define expected request
 	expectedRequest := models.FizzBuzzRequest{Int1: 3, Int2: 5, Limit: 15, Str1: "Fizz", Str2: "Buzz"}
@@ -26,19 +26,18 @@ func TestFizzBuzzHandler_Success(t *testing.T) {
 
 	// Mock the GenerateFizzBuzz method for this request
 	mockFizzBuzzService.EXPECT().GenerateFizzBuzz(expectedRequest).Return(expectedResponse).Times(1)
+	mockStatsService.EXPECT().TrackRequest(expectedRequest).Times(1)
 
 	// Initialize FizzBuzzHandler
-	handler := NewFizzBuzzHandler(mockFizzBuzzService)
+	handler := NewFizzBuzzHandler(mockFizzBuzzService, mockStatsService)
 
 	// Setup Gin router
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
-	router.POST("/api/fizzbuzz", handler.HandleFizzBuzz)
+	router.GET("/api/fizzbuzz", handler.HandleFizzBuzz) // Use GET for query parameters
 
-	// Simulate HTTP request (POST with body)
-	reqBody := `{"int1":3, "int2":5, "limit":15, "str1":"Fizz", "str2":"Buzz"}`
-	request, _ := http.NewRequest("POST", "/api/fizzbuzz", bytes.NewBufferString(reqBody))
-	request.Header.Set("Content-Type", "application/json")
+	// Simulate HTTP request (GET with query parameters)
+	request, _ := http.NewRequest("GET", "/api/fizzbuzz?int1=3&int2=5&limit=15&str1=Fizz&str2=Buzz", nil)
 
 	// Capture Response
 	w := httptest.NewRecorder()
@@ -55,31 +54,30 @@ func TestFizzBuzzHandler_InvalidRequest(t *testing.T) {
 
 	// Mock FizzBuzzService
 	mockFizzBuzzService := mocks.NewMockFizzBuzzServiceInterface(ctrl)
+	mockStatsService := mocks.NewMockStatsServiceInterface(ctrl)
 
-	// Define invalid request (Limit = 0)
+	// Define invalid request: Limit is set to 0 to simulate an invalid input
 	invalidRequest := models.FizzBuzzRequest{Int1: 3, Int2: 5, Limit: 0, Str1: "Fizz", Str2: "Buzz"}
 
-	// Setup mock to expect an invalid request and return an empty array (or you can return an error)
-	mockFizzBuzzService.EXPECT().GenerateFizzBuzz(invalidRequest).Return([]string{}).Times(1)
+	// Expect the GenerateFizzBuzz method to not be called in case of an invalid request
+	mockFizzBuzzService.EXPECT().GenerateFizzBuzz(invalidRequest).Times(0)
 
 	// Initialize FizzBuzzHandler
-	handler := NewFizzBuzzHandler(mockFizzBuzzService)
+	handler := NewFizzBuzzHandler(mockFizzBuzzService, mockStatsService)
 
 	// Setup Gin router
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
-	router.POST("/api/fizzbuzz", handler.HandleFizzBuzz)
+	router.GET("/api/fizzbuzz", handler.HandleFizzBuzz) // Use GET for query parameters
 
-	// Simulate HTTP request (POST with body)
-	reqBody := `{"int1":3, "int2":5, "limit":0, "str1":"Fizz", "str2":"Buzz"}`
-	request, _ := http.NewRequest("POST", "/api/fizzbuzz", bytes.NewBufferString(reqBody))
-	request.Header.Set("Content-Type", "application/json")
+	// Simulate HTTP request (GET with invalid query parameters)
+	request, _ := http.NewRequest("GET", "/api/fizzbuzz?int1=3&int2=5&limit=0&str1=Fizz&str2=Buzz", nil)
 
 	// Capture Response
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, request)
 
-	// Validate Response: Expecting an empty array because of invalid input (Limit = 0)
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.JSONEq(t, `[]`, w.Body.String()) // Return empty array for invalid input
+	// Validate Response
+	assert.Equal(t, http.StatusBadRequest, w.Code) // Expecting BadRequest due to invalid limit
+	assert.JSONEq(t, `{"error": "Invalid request"}`, w.Body.String())
 }
