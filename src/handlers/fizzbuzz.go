@@ -34,6 +34,10 @@ func (h *FizzBuzzHandler) HandleFizzBuzz(c *gin.Context) {
 
 	h.statsService.TrackRequest(req)
 
-	result := h.service.GenerateFizzBuzz(req)
+	result, err := h.service.GenerateFizzBuzz(req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, result)
 }

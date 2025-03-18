@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/thdelmas/tech-test-adevinta/models"
@@ -8,7 +9,7 @@ import (
 
 // FizzBuzzServiceInterface defines the methods for FizzBuzzService
 type FizzBuzzServiceInterface interface {
-	GenerateFizzBuzz(req models.FizzBuzzRequest) []string
+	GenerateFizzBuzz(req models.FizzBuzzRequest) ([]string, error)
 }
 
 // FizzBuzzService handles the fizzbuzz logic
@@ -19,10 +20,16 @@ func NewFizzBuzzService() *FizzBuzzService {
 	return &FizzBuzzService{}
 }
 
-// GenerateFizzBuzz generates the fizzbuzz sequence based on the given request
-func (s *FizzBuzzService) GenerateFizzBuzz(req models.FizzBuzzRequest) []string {
+func (s *FizzBuzzService) GenerateFizzBuzz(req models.FizzBuzzRequest) ([]string, error) {
+	if req.Int1 <= 0 || req.Int2 <= 0 {
+		return nil, fmt.Errorf("int1 and int2 must be greater than 0")
+	}
+	if req.Limit <= 0 {
+		return nil, fmt.Errorf("limit must be greater than 0")
+	}
 
 	result := make([]string, req.Limit)
+
 	for i := 1; i <= req.Limit; i++ {
 		switch {
 		case i%req.Int1 == 0 && i%req.Int2 == 0:
@@ -35,5 +42,6 @@ func (s *FizzBuzzService) GenerateFizzBuzz(req models.FizzBuzzRequest) []string 
 			result[i-1] = strconv.Itoa(i)
 		}
 	}
-	return result
+
+	return result, nil
 }

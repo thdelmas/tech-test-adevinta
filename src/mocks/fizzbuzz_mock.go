@@ -35,11 +35,12 @@ func (m *MockFizzBuzzServiceInterface) EXPECT() *MockFizzBuzzServiceInterfaceMoc
 }
 
 // GenerateFizzBuzz mocks base method.
-func (m *MockFizzBuzzServiceInterface) GenerateFizzBuzz(req models.FizzBuzzRequest) []string {
+func (m *MockFizzBuzzServiceInterface) GenerateFizzBuzz(req models.FizzBuzzRequest) ([]string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GenerateFizzBuzz", req)
 	ret0, _ := ret[0].([]string)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GenerateFizzBuzz indicates an expected call of GenerateFizzBuzz.

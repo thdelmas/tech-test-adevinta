@@ -25,7 +25,7 @@ func TestFizzBuzzHandler_Success(t *testing.T) {
 	expectedResponse := []string{"1", "2", "Fizz", "4", "Buzz", "Fizz", "7", "8", "Fizz", "Buzz", "11", "Fizz", "13", "14", "FizzBuzz"}
 
 	// Mock the GenerateFizzBuzz method for this request
-	mockFizzBuzzService.EXPECT().GenerateFizzBuzz(expectedRequest).Return(expectedResponse).Times(1)
+	mockFizzBuzzService.EXPECT().GenerateFizzBuzz(expectedRequest).Return(expectedResponse, nil).Times(1)
 	mockStatsService.EXPECT().TrackRequest(expectedRequest).Times(1)
 
 	// Initialize FizzBuzzHandler
