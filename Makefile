@@ -14,7 +14,7 @@ $(EXEC_PATH):
 	@mkdir -p ./bin
 	go -C $(SRC_DIR) build -o ../$(EXEC_PATH) ./
 
-run: $(EXEC_PATH)
+run:
 	@go -C $(SRC_DIR) run .
 
 clean:
