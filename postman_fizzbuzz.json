@@ -1,0 +1,46 @@
+{
+  "info": {
+    "name": "FizzBuzz API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Generate FizzBuzz Sequence",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/fizzbuzz?int1=3&int2=5&limit=15&str1=fizz&str2=buzz",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "fizzbuzz"],
+          "query": [
+            { "key": "int1", "value": "3", "description": "First divisor" },
+            { "key": "int2", "value": "5", "description": "Second divisor" },
+            { "key": "limit", "value": "15", "description": "Upper limit for the sequence" },
+            { "key": "str1", "value": "fizz", "description": "String to replace multiples of int1" },
+            { "key": "str2", "value": "buzz", "description": "String to replace multiples of int2" }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Retrieve API Statistics",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/stats",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "stats"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
+
