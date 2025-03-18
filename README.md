@@ -145,5 +145,4 @@ curl 'http://localhost:8080/api/stats'
 ## Additional Notes
 - Ensure that port `8080` is available before running the container.
 - The `/api/stats` endpoint helps track the most frequently requested FizzBuzz parameters.
-- The application follows a stateless architecture, meaning each request is processed independently.
 - A postman collection is present (`postman_fizzbuzz.json`) and can be imported for manual request using postman instead of curl 
