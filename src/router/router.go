@@ -3,13 +3,11 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/thdelmas/tech-test-adevinta/handlers"
+	"github.com/thdelmas/tech-test-adevinta/services"
 )
 
 // SetupRouter configures and returns the Gin router
-func SetupRouter() *gin.Engine {
-	// Set Gin to release mode in production
-	// gin.SetMode(gin.ReleaseMode)
-
+func SetupRouter(fizzBuzzService services.FizzBuzzServiceInterface, statsService services.StatsServiceInterface) *gin.Engine {
 	// Initialize Gin router
 	router := gin.New()
 
@@ -21,8 +19,9 @@ func SetupRouter() *gin.Engine {
 	// Define routes
 	api := router.Group("/api")
 	{
-		api.GET("/fizzbuzz", handlers.FizzBuzzHandler)
-		api.GET("/stats", handlers.StatsHandler)
+		// Inject dependencies into the handlers
+		api.GET("/fizzbuzz", handlers.NewFizzBuzzHandler(fizzBuzzService).HandleFizzBuzz)
+		api.GET("/stats", handlers.NewStatsHandler(statsService).HandleStats)
 	}
 
 	return router

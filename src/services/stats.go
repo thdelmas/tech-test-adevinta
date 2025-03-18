@@ -9,25 +9,26 @@ import (
 	"github.com/thdelmas/tech-test-adevinta/models"
 )
 
+// StatsServiceInterface defines methods for tracking and retrieving statistics
+type StatsServiceInterface interface {
+	TrackRequest(req models.FizzBuzzRequest)
+	GetMostFrequentRequest() (models.FizzBuzzRequest, int)
+}
+
 // StatsService tracks and provides statistics for requests
 type StatsService struct {
 	counter map[string]int
 	mutex   sync.RWMutex
 }
 
-var (
-	statsServiceInstance *StatsService
-	statsServiceOnce     sync.Once
-)
+// Ensure StatsService implements the interface
+var _ StatsServiceInterface = (*StatsService)(nil)
 
-// GetStatsService returns a singleton instance of StatsService
-func GetStatsService() *StatsService {
-	statsServiceOnce.Do(func() {
-		statsServiceInstance = &StatsService{
-			counter: make(map[string]int),
-		}
-	})
-	return statsServiceInstance
+// NewStatsService creates a new instance of StatsService (avoids using a singleton)
+func NewStatsService() *StatsService {
+	return &StatsService{
+		counter: make(map[string]int),
+	}
 }
 
 // TrackRequest tracks a request in the statistics

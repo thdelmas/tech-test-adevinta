@@ -2,7 +2,6 @@ package services
 
 import (
 	"strconv"
-	"sync"
 
 	"github.com/thdelmas/tech-test-adevinta/models"
 )
@@ -12,23 +11,12 @@ type FizzBuzzServiceInterface interface {
 	GenerateFizzBuzz(req models.FizzBuzzRequest) []string
 }
 
-// FizzBuzzService handles the fizzbuzz business logic
+// FizzBuzzService handles the fizzbuzz logic
 type FizzBuzzService struct{}
 
-// Ensure FizzBuzzService implements the interface
-var _ FizzBuzzServiceInterface = (*FizzBuzzService)(nil)
-
-var (
-	fizzBuzzServiceInstance *FizzBuzzService
-	fizzBuzzServiceOnce     sync.Once
-)
-
-// GetFizzBuzzService returns a singleton instance of FizzBuzzService
-func GetFizzBuzzService() *FizzBuzzService {
-	fizzBuzzServiceOnce.Do(func() {
-		fizzBuzzServiceInstance = &FizzBuzzService{}
-	})
-	return fizzBuzzServiceInstance
+// NewFizzBuzzService creates a new instance
+func NewFizzBuzzService() *FizzBuzzService {
+	return &FizzBuzzService{}
 }
 
 // GenerateFizzBuzz generates the fizzbuzz sequence based on the given request

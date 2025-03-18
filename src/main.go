@@ -5,11 +5,16 @@ import (
 
 	"github.com/thdelmas/tech-test-adevinta/config"
 	"github.com/thdelmas/tech-test-adevinta/router"
+	"github.com/thdelmas/tech-test-adevinta/services"
 )
 
 func main() {
 	log.Println("Adevinta - FizzBuzz")
-	router := router.SetupRouter()
+	fizzBuzzService := services.NewFizzBuzzService()
+	statsService := services.NewStatsService()
+
+	// Set up the router with dependencies injected
+	r := router.SetupRouter(fizzBuzzService, statsService)
 	addr := config.GetServerAddress()
-	log.Fatal(router.Run(addr))
+	log.Fatal(r.Run(addr))
 }
